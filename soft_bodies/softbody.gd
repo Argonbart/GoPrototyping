@@ -75,7 +75,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _ready() -> void:
-	spawn_pentagon()
+	spawn_blob(16, 10000, 0.2)
 
 func clear():
 	constraints.clear()
@@ -102,6 +102,18 @@ func spawn_single_constraint(pos: Vector2 = Vector2.ZERO):
 		points.append(Point.new(pos + p, 20))
 
 	constraints.append(Constraint.new(points[idx], points[idx + 1], 100, CONSTRAINT_STRENGTH))
+
+
+func spawn_blob(num_points: int, area: float, constraint_length: float):
+	target_area = area
+	for i in range(num_points):
+		var angle = 360.0 / num_points * i
+		var point = Point.new(Vector2(cos(angle), sin(angle)), 8.0)
+		points.append(point)
+	for i in range(points.size()):
+		var p_a = points[i]
+		var p_b = points[(i + 1) % points.size()]
+		constraints.append(Constraint.new(p_a, p_b, constraint_length, CONSTRAINT_STRENGTH))
 
 
 func spawn_pentagon_with_center(pos: Vector2 = Vector2.ZERO):
