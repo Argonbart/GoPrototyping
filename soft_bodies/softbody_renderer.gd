@@ -3,6 +3,8 @@ class_name SoftBodyRenderer extends Node2D
 
 var body: SoftBody
 
+var default_font: Font = ThemeDB.fallback_font
+
 
 func _ready() -> void:	
 	body = get_parent() as SoftBody

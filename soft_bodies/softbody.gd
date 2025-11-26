@@ -60,6 +60,7 @@ class Constraint:
 
 var points: Array[Point]
 var constraints: Array[Constraint]
+var is_paused: bool = false
 
 
 func _input(event: InputEvent) -> void:
@@ -69,37 +70,33 @@ func _input(event: InputEvent) -> void:
 		for p in points:
 			p.set_velocity(Vector2(x, y))
 
-	if event.is_action_pressed("1"):
-		setup_single_constraint()
-	if event.is_action_pressed("2"):
-		setup_pentagon()
-	if event.is_action_pressed("3"):
-		setup_pentagon_with_center()
-
 
 func _ready() -> void:
-	setup_single_constraint()
+	spawn_single_constraint()
 
-	
-func setup_single_constraint():
+func clear():
 	constraints.clear()
 	points.clear()
 
+func spawn_point(pos: Vector2):
+	points.append(Point.new(pos, 20))
+
+	
+func spawn_single_constraint(pos: Vector2 = Vector2.ZERO):
 	var points_to_add = [
 	Vector2(-50, -50),      
 	Vector2(50, 0),     
 	]
+
+	var idx = points.size()
 	
 	for p in points_to_add:
-		points.append(Point.new(p, 20))
+		points.append(Point.new(pos + p, 20))
 
-	constraints.append(Constraint.new(points[0], points[1], 100, 0.2))
+	constraints.append(Constraint.new(points[idx], points[idx + 1], 100, 0.2))
 
 
-func setup_pentagon_with_center():
-	constraints.clear()
-	points.clear()
-
+func spawn_pentagon_with_center(pos: Vector2 = Vector2.ZERO):
 	var points_to_add = [
 	Vector2(0, -50),      # obere Spitze
 	Vector2(47, -15),     # rechts-oben
@@ -108,26 +105,24 @@ func setup_pentagon_with_center():
 	Vector2(-47, -15),    # links-oben
 	]
 	
+	var idx = points.size()
+
 	for p in points_to_add:
-		points.append(Point.new(p, 20))
+		points.append(Point.new(pos + p, 20))
 
-	points.append(Point.new(Vector2.ZERO, 20))
+	points.append(Point.new(pos + Vector2.ZERO, 20))
 
-
-	constraints.append(Constraint.new(points[0], points[1], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[1], points[2], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[2], points[3], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[3], points[4], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[4], points[0], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx], points[idx + 1], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 1], points[idx + 2], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 2], points[idx + 3], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 3], points[idx + 4], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 4], points[idx], 100.0, CONSTRAINT_STRENGTH))
 
 	for i in range(5):
-		constraints.append(Constraint.new(points[i], points[5], 100, CONSTRAINT_STRENGTH))
+		constraints.append(Constraint.new(points[idx + i], points[idx + 5], 100, CONSTRAINT_STRENGTH))
 
 
-func setup_pentagon():
-	constraints.clear()
-	points.clear()
-
+func spawn_pentagon(pos: Vector2 = Vector2.ZERO):
 	var points_to_add = [
 	Vector2(0, -50),      # obere Spitze
 	Vector2(47, -15),     # rechts-oben
@@ -136,17 +131,22 @@ func setup_pentagon():
 	Vector2(-47, -15),    # links-oben
 	]
 	
-	for p in points_to_add:
-		points.append(Point.new(p, 20))
+	var idx = points.size()
 
-	constraints.append(Constraint.new(points[0], points[1], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[1], points[2], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[2], points[3], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[3], points[4], 100.0, CONSTRAINT_STRENGTH))
-	constraints.append(Constraint.new(points[4], points[0], 100.0, CONSTRAINT_STRENGTH))
+	for p in points_to_add:
+		points.append(Point.new(pos + p, 20))
+
+	constraints.append(Constraint.new(points[idx], points[idx + 1], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 1], points[idx + 2], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 2], points[idx + 3], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 3], points[idx + 4], 100.0, CONSTRAINT_STRENGTH))
+	constraints.append(Constraint.new(points[idx + 4], points[idx], 100.0, CONSTRAINT_STRENGTH))
 	
 
 func _physics_process(_delta: float) -> void:
+	if is_paused:
+		return
+
 	var bounds = get_viewport_rect().size * 0.5
 	
 	for p in points:
@@ -194,10 +194,6 @@ func _physics_process(_delta: float) -> void:
 		# applying position accumulations
 		for p in points:
 			p.apply_displacement()
-
-	if Input.is_action_pressed("left_click"):
-		var mouse_position = get_global_mouse_position()
-		points[0].position = mouse_position				
 
 	# limit points to viewport
 	for p in points:		
