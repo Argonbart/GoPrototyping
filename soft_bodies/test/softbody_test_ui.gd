@@ -1,7 +1,7 @@
 extends Control
 
 
-@export var body: SoftBody
+@export var body: SoftBodyTest
 @export var label_paused: Control
 
 @export var button_pause: Button

@@ -1,13 +1,13 @@
-class_name SoftBodyRenderer extends Node2D
+class_name SoftBodyTestRenderer extends Node2D
 
 
-var body: SoftBody
+var body: SoftBodyTest
 
 var default_font: Font = ThemeDB.fallback_font
 
 
 func _ready() -> void:	
-	body = get_parent() as SoftBody
+	body = get_parent() as SoftBodyTest
 		
 
 func _process(_delta: float) -> void:

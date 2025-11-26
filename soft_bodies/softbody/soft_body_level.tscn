@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2pnax07aujhd"]
+
+[ext_resource type="Script" uid="uid://b0tacqei7k716" path="res://softbody/soft_body.gd" id="1_23gtn"]
+[ext_resource type="Script" uid="uid://b3kmc7cyr58wo" path="res://softbody/soft_body_renderer.gd" id="2_d3k81"]
+
+[node name="SoftBodyLevel" type="Node2D"]
+
+[node name="SoftBody" type="Node2D" parent="."]
+script = ExtResource("1_23gtn")
+metadata/_custom_type_script = "uid://b0tacqei7k716"
+
+[node name="SoftBodytRenderer" type="Node2D" parent="SoftBody"]
+script = ExtResource("2_d3k81")
+
+[node name="Camera2D" type="Camera2D" parent="."]
