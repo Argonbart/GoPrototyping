@@ -30,6 +30,16 @@ class Point:
 		displacement_accumulator = Vector2.ZERO
 		number_of_accumulations = 0
 
+	func limit_to_bounds(bounds: Vector2):
+		if position.x + radius > bounds.x:
+			position.x = bounds.x -radius
+		if position.x - radius < -bounds.x:
+			position.x = -bounds.x + radius
+			
+		if position.y + radius > bounds.y:
+			position.y = bounds.y  -radius
+		if position.y - radius < -bounds.y:
+			position.y = -bounds.y + radius	
 
 	
 	func _init(p: Vector2, r: float) -> void:

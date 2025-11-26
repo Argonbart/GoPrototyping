@@ -49,6 +49,7 @@ func _physics_process(_delta: float) -> void:
 
 		# collision
 		# ...
+		# use raycast query: https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html#raycast-query
 
 		p.position += velocity
 		p.previous_position = temp_pos
