@@ -31,4 +31,4 @@ func _draw() -> void:
 
 		if p.is_about_to_connect:
 			color = Color.POWDER_BLUE
-		draw_circle(p.position, p.radius + 2.5, color, false, 10.0, true)
+			draw_circle(p.position, p.radius + 2.5, color, false, 5.0, true)

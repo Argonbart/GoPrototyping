@@ -14,6 +14,7 @@ class Point:
 	var is_interacted_with: bool
 	var is_about_to_connect: bool
 
+
 	func set_velocity(vel: Vector2):
 		p_position = position - vel
 		

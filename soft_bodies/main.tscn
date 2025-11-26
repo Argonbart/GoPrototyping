@@ -31,7 +31,7 @@ metadata/_custom_type_script = "uid://bws5dsl2c44mw"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="SoftBodyUI" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("body", "label_paused", "button_pause", "button_reset")]
+[node name="SoftBodyUI" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("body", "label_paused", "button_pause", "button_reset", "button_clear_velocity")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,6 +45,7 @@ body = NodePath("../../SoftBody")
 label_paused = NodePath("MarginContainer/LabelPaused")
 button_pause = NodePath("MarginContainer/HBoxContainer/ButtonPause")
 button_reset = NodePath("MarginContainer/HBoxContainer/ButtonReset")
+button_clear_velocity = NodePath("MarginContainer/HBoxContainer/ButtonClearVelocity")
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SoftBodyUI"]
 layout_mode = 1
@@ -79,7 +80,7 @@ focus_mode = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_h2yge")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1bvp3")
 theme_override_styles/focus = SubResource("StyleBoxFlat_h2yge")
-text = " P "
+text = " Pause "
 
 [node name="ButtonReset" type="Button" parent="CanvasLayer/SoftBodyUI/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -88,4 +89,13 @@ focus_mode = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_h2yge")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1bvp3")
 theme_override_styles/focus = SubResource("StyleBoxFlat_h2yge")
-text = " R "
+text = " Reset "
+
+[node name="ButtonClearVelocity" type="Button" parent="CanvasLayer/SoftBodyUI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_h2yge")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1bvp3")
+theme_override_styles/focus = SubResource("StyleBoxFlat_h2yge")
+text = " Clear Velcoity "

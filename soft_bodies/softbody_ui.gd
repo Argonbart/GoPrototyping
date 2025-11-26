@@ -6,6 +6,7 @@ extends Control
 
 @export var button_pause: Button
 @export var button_reset: Button
+@export var button_clear_velocity: Button
 
 var currently_grabbed_point
 var point_to_connect
@@ -14,6 +15,7 @@ var point_to_connect
 func _ready() -> void:
 	button_reset.pressed.connect(handle_reset_button_pressed)
 	button_pause.pressed.connect(handle_pause_button_pressed)
+	button_clear_velocity.pressed.connect(handle_clear_velocity_button_pressed)
 
 
 func _input(event: InputEvent) -> void:
@@ -36,6 +38,9 @@ func _input(event: InputEvent) -> void:
 
 	if event.is_action_pressed("reset"):
 		handle_reset_button_pressed()
+
+	if event.is_action_pressed("clear_velocity"):
+		handle_clear_velocity_button_pressed()
 
 
 func _physics_process(_delta: float) -> void:
@@ -84,3 +89,8 @@ func handle_reset_button_pressed():
 	currently_grabbed_point = null
 	point_to_connect = null
 	body.clear()
+
+
+func handle_clear_velocity_button_pressed():
+	for p in body.points:
+		p.set_velocity(Vector2.ZERO)
