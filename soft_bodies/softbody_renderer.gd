@@ -26,7 +26,9 @@ func _draw() -> void:
 		var color = Color.DARK_OLIVE_GREEN if p.is_highlit else Color.WEB_GRAY
 		if p.is_interacted_with:
 			color = Color.GREEN
-		if p.is_about_to_connect:
-			color = Color.POWDER_BLUE
 		
 		draw_circle(p.position, p.radius, color)
+
+		if p.is_about_to_connect:
+			color = Color.POWDER_BLUE
+		draw_circle(p.position, p.radius + 2.5, color, false, 10.0, true)
