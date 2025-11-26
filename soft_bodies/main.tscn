@@ -23,6 +23,7 @@ corner_radius_bottom_left = 4
 
 [node name="SoftBody" type="Node2D" parent="."]
 script = ExtResource("1_ig7tw")
+target_area = 17000.195
 metadata/_custom_type_script = "uid://dym4jxr8dk8nh"
 
 [node name="SoftBodyRenderer" type="Node2D" parent="SoftBody"]

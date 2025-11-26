@@ -59,24 +59,23 @@ class Constraint:
 		target_length = _l
 		strength = _s
 
-@export var CONSTRAINT_SOLVER_STEPS: int = 10
-@export var CONSTRAINT_STRENGTH: float = 0.2
+@export var CONSTRAINT_SOLVER_STEPS: int = 1
+@export var CONSTRAINT_STRENGTH: float = 1.0
+@export var target_area: float = 17000
 
 var points: Array[Point]
 var constraints: Array[Constraint]
 var is_paused: bool = false
+var process_this_frame_pause: bool
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
-		var x = randf_range(-50.0, 50.0)
-		var y = randf_range(-50, 0)
-		for p in points:
-			p.set_velocity(Vector2(x, y))
+		process_this_frame_pause = true
 
 
 func _ready() -> void:
-	spawn_single_constraint()
+	spawn_pentagon()
 
 func clear():
 	constraints.clear()
@@ -102,7 +101,7 @@ func spawn_single_constraint(pos: Vector2 = Vector2.ZERO):
 	for p in points_to_add:
 		points.append(Point.new(pos + p, 20))
 
-	constraints.append(Constraint.new(points[idx], points[idx + 1], 100, 0.2))
+	constraints.append(Constraint.new(points[idx], points[idx + 1], 100, CONSTRAINT_STRENGTH))
 
 
 func spawn_pentagon_with_center(pos: Vector2 = Vector2.ZERO):
@@ -153,8 +152,10 @@ func spawn_pentagon(pos: Vector2 = Vector2.ZERO):
 	
 
 func _physics_process(_delta: float) -> void:
-	if is_paused:
+	if is_paused and not process_this_frame_pause:
 		return
+
+	process_this_frame_pause = false
 
 	var bounds = get_viewport_rect().size * 0.5
 	
@@ -176,6 +177,7 @@ func _physics_process(_delta: float) -> void:
 		# gravity
 		p.position += Vector2.DOWN
 		
+
 	# handle constraints
 	for i in range(CONSTRAINT_SOLVER_STEPS):
 		for c in constraints:
@@ -200,6 +202,8 @@ func _physics_process(_delta: float) -> void:
 			point_a.accumulate_displacement(offset_a)
 			point_b.accumulate_displacement(offset_b)
 
+		accumulate_area_offsets()
+
 		# applying position accumulations
 		for p in points:
 			p.apply_displacement()
@@ -208,3 +212,38 @@ func _physics_process(_delta: float) -> void:
 	for p in points:		
 		p.limit_to_bounds(bounds)
 		
+
+
+func accumulate_area_offsets():
+	var radius_2 = target_area / PI
+	var radius = (sqrt(radius_2))
+	var circ = 2 * PI * radius
+
+	var area_accumulator = 0.0
+
+	for i in range(points.size()):
+		var next_id = (i + 1) % points.size()
+		var p1 = points[i].position
+		var p2 = points[next_id].position
+
+		var width = p2.x - p1.x
+		var height = (p1.y + p2.y) / 2
+		area_accumulator += width * -height
+
+	var factor = (target_area - area_accumulator) / circ
+
+
+	for id in range(points.size()):
+		var next_id = (id + 1) % points.size()
+		var prev_id = (id - 1 + points.size()) % points.size()	
+		
+		var pos_next = points[next_id].position
+		var pos_prev = points[prev_id].position
+
+		var dir = pos_next - pos_prev
+		dir = dir.rotated(-PI * 0.5)
+
+		dir = dir.normalized()
+		var offset = dir * factor
+
+		points[id].accumulate_displacement(offset)
