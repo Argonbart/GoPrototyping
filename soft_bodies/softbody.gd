@@ -10,6 +10,9 @@ class Point:
 	var displacement_accumulator: Vector2
 	var number_of_accumulations: int
 
+	var is_highlit: bool
+	var is_interacted_with: bool
+
 
 	func set_velocity(vel: Vector2):
 		p_position = position - vel

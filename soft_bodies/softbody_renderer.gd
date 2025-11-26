@@ -22,5 +22,8 @@ func _draw() -> void:
 		var color = Color.DIM_GRAY.lerp(Color.RED, t)
 		draw_line(c.a.position, c.b.position, color, 10)
 
-	for b in body.points:
-		draw_circle(b.position, b.radius, Color.WEB_GRAY)
+	for p in body.points:
+		var color = Color.DARK_OLIVE_GREEN if p.is_highlit else Color.WEB_GRAY
+		if p.is_interacted_with:
+			color = Color.GREEN
+		draw_circle(p.position, p.radius, color)
