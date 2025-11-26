@@ -12,7 +12,7 @@ class Point:
 
 	var is_highlit: bool
 	var is_interacted_with: bool
-
+	var is_about_to_connect: bool
 
 	func set_velocity(vel: Vector2):
 		p_position = position - vel
@@ -80,6 +80,11 @@ func _ready() -> void:
 func clear():
 	constraints.clear()
 	points.clear()
+
+
+func connect_points(p1: Point, p2: Point, distance: float = 100, strength: float = CONSTRAINT_STRENGTH):
+	constraints.append(Constraint.new(p1, p2, distance, strength))
+
 
 func spawn_point(pos: Vector2):
 	points.append(Point.new(pos, 20))
