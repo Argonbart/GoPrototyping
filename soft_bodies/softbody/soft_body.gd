@@ -15,6 +15,7 @@ var constraints: Array[SBConstraint]
 
 func _ready() -> void:
 	setup(number_of_points, desired_area * desired_area_multiplier, 0.5, CONSTRAINT_STIFFNESS)
+	# setup_single_point()
 
 
 func setup(num_points: int, area: float, constraint_length: float, constraint_stiffness: float):
@@ -32,13 +33,20 @@ func setup(num_points: int, area: float, constraint_length: float, constraint_st
 		constraints.append(SBConstraint.new(p_a, p_b, constraint_length, constraint_stiffness))
 
 
+func setup_single_point():
+	clear()
+	var spawn_pos = global_position
+	var point = SBPoint.new(spawn_pos, 8.0)
+	points.append(point)
+
+
 func clear():
 	constraints.clear()
 	points.clear()
 
 
 func _physics_process(_delta: float) -> void:
-
+	var space_state = get_world_2d().direct_space_state
 	# --- verlet integration ---
 	for p in points:
 		var temp_pos = p.position
@@ -48,11 +56,25 @@ func _physics_process(_delta: float) -> void:
 		var next_pos = p.position + velocity
 
 		# collision
-		# ...
-		# use raycast query: https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html#raycast-query
+		var query = PhysicsRayQueryParameters2D.create(p.position, next_pos)
+		var result := space_state.intersect_ray(query)
+		if result: 
+			# reflect velocity vector on the surface of the collision object using a projection on the normal
+			var normal = result.normal 
+			var intersection = result.position
+			var v_remaining = next_pos - intersection
+			# normal should already have unit length so v_proj_n = v * n * n
+			# else v_proj_n would be (v * n) / (n * n) * n
+			var v_proj_n = v_remaining * normal * normal
+			var v_reflected = v_remaining - 2 * v_proj_n			
 
-		p.position += velocity
-		p.previous_position = temp_pos
+			p.position = intersection + v_reflected
+			p.previous_position = intersection
+
+		# no collision happening
+		else:
+			p.position += velocity
+			p.previous_position = temp_pos
 
 		# gravity
 		p.position += Vector2.DOWN
@@ -60,13 +82,22 @@ func _physics_process(_delta: float) -> void:
 	# --- handle constraints and area constraint ---
 	for i in range(CONSTRAINT_SOLVER_STEPS):
 		accumulate_constraint_offsets()
-		accumulate_area_offsets()
+		if points.size() > 2: # temporary guard for single points
+			accumulate_area_offsets()
 
 		for p in points:
 			p.apply_displacement()
 
 	for p in points:
 		p.limit_to_bounds(get_viewport_rect().size * 0.5)
+
+	# limit to geometry
+	for p in points:
+		var move_dir = (p.position - p.previous_position).normalized()
+		var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir, p.position)
+		var result := space_state.intersect_ray(query)
+		if result: 
+			p.position = result.position
 
 
 func accumulate_constraint_offsets():

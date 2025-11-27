@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://b0tacqei7k716" path="res://softbody/soft_body.gd" id="1_23gtn"]
 [ext_resource type="Script" uid="uid://b3kmc7cyr58wo" path="res://softbody/soft_body_renderer.gd" id="2_d3k81"]
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_23gtn"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_23gtn"]
+size = Vector2(951, 40)
 
 [node name="SoftBodyLevel" type="Node2D"]
 
@@ -17,7 +18,7 @@ script = ExtResource("2_d3k81")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(0, 214)
+position = Vector2(0, 129)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-shape = SubResource("WorldBoundaryShape2D_23gtn")
+shape = SubResource("RectangleShape2D_23gtn")
