@@ -14,8 +14,9 @@ size = Vector2(594.6499, 40)
 position = Vector2(-416, -7)
 script = ExtResource("1_23gtn")
 number_of_points = 20
-CONSTRAINT_STIFFNESS = 0.195
-slide_scale = 0.445
+CONSTRAINT_STIFFNESS = 0.2
+slide_scale = 0.5
+gravity_scale = 3.0
 metadata/_custom_type_script = "uid://b0tacqei7k716"
 
 [node name="SoftBodytRenderer" type="Node2D" parent="SoftBody"]

@@ -9,6 +9,7 @@ class_name SoftBody extends Node2D
 
 @export_range(0.0, 1.0) var slide_scale = 0.8
 @export var move_speed: float = 5.0
+@export var gravity_scale: float = 1.0
 
 var desired_area: float
 
@@ -61,38 +62,17 @@ func _process(_delta: float) -> void:
 
 func _physics_process(_delta: float) -> void:
 	collisions_this_frame.clear()
-	var space_state = get_world_2d().direct_space_state
-	# --- verlet integration ---
+
 	for p in points:
 		var temp_pos = p.position
 
 		var velocity = (p.position - p.previous_position) * 0.99
-		
-		var next_pos = p.position + velocity
 
-		# collision
-		var query = PhysicsRayQueryParameters2D.create(p.position, next_pos)
-		var result := space_state.intersect_ray(query)
-		if result: 
-			# reflect velocity vector on the surface of the collision object using a projection on the normal
-			var normal = result.normal 
-			var intersection = result.position
-			var v_remaining = next_pos - intersection
-			# normal should already have unit length so v_proj_n = v * n * n
-			# else v_proj_n would be (v * n) / (n * n) * n
-			var v_proj_n = v_remaining * normal * normal
-			var v_reflected = v_remaining - 2 * v_proj_n			
-
-			p.position = intersection + v_reflected
-			p.previous_position = intersection	
-
-		# no collision happening
-		else:
-			p.position += velocity
-			p.previous_position = temp_pos
+		p.position += velocity
+		p.previous_position = temp_pos
 
 		# gravity
-		p.accumulate_displacement(Vector2.DOWN * 3)
+		p.accumulate_displacement(Vector2.DOWN * gravity_scale)
 
 		# input
 		p.accumulate_displacement(Vector2(input_axis,0) * move_speed)
@@ -110,18 +90,23 @@ func _physics_process(_delta: float) -> void:
 		for p in points:
 			p.apply_displacement()
 
-		# limit to geometry and slide
 	for p in points:
-		var move_dir = (p.position - p.previous_position).normalized()
-		var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir * 2, p.position)
-		var result := space_state.intersect_ray(query)
-		if result: 
-			var n = result.normal.normalized()
-			var remaining = p.position - result.position
-			var remaining_proj_n = remaining * n * n
-			var slide_pos = p.position - remaining_proj_n 
-			p.position = lerp(result.position, slide_pos, slide_scale)
-			collisions_this_frame.append(result)
+		move_and_slide(p)
+
+
+func move_and_slide(p: SBPoint):
+	var space_state = get_world_2d().direct_space_state
+	
+	var move_dir = (p.position - p.previous_position).normalized()
+	var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir * 2, p.position)
+	var result := space_state.intersect_ray(query)
+	if result: 
+		var n = result.normal.normalized()
+		var remaining = p.position - result.position
+		var remaining_proj_n = remaining.dot(n) * n
+		var slide_pos = p.position - remaining_proj_n
+		p.position = lerp(result.position, slide_pos, slide_scale)
+		collisions_this_frame.append(result)
 
 
 func accumulate_constraint_offsets():
