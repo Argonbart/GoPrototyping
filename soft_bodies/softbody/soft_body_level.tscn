@@ -10,6 +10,7 @@ size = Vector2(951, 40)
 
 [node name="SoftBody" type="Node2D" parent="."]
 script = ExtResource("1_23gtn")
+slide_scale = 0.001
 metadata/_custom_type_script = "uid://b0tacqei7k716"
 
 [node name="SoftBodytRenderer" type="Node2D" parent="SoftBody"]

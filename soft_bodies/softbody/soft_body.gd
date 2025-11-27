@@ -7,11 +7,14 @@ class_name SoftBody extends Node2D
 @export var CONSTRAINT_SOLVER_STEPS: int = 10
 @export var desired_area_multiplier: float = 1.0
 
+@export_range(0.0, 1.0) var slide_scale = 0.8
+
 var desired_area = 10000
 
 var points: Array[SBPoint]
 var constraints: Array[SBConstraint]
 
+var input_vector: Vector2 
 
 func _ready() -> void:
 	setup(number_of_points, desired_area * desired_area_multiplier, 0.5, CONSTRAINT_STIFFNESS)
@@ -43,6 +46,11 @@ func setup_single_point():
 func clear():
 	constraints.clear()
 	points.clear()
+
+
+func _process(delta: float) -> void:
+	input_vector = Input.get_vector("left", "right", "up", "down")
+	print(input_vector)
 
 
 func _physics_process(_delta: float) -> void:
@@ -79,6 +87,8 @@ func _physics_process(_delta: float) -> void:
 		# gravity
 		p.position += Vector2.DOWN
 
+		# input
+		p.position += input_vector
 	# --- handle constraints and area constraint ---
 	for i in range(CONSTRAINT_SOLVER_STEPS):
 		accumulate_constraint_offsets()
@@ -91,13 +101,17 @@ func _physics_process(_delta: float) -> void:
 	for p in points:
 		p.limit_to_bounds(get_viewport_rect().size * 0.5)
 
-	# limit to geometry
+		# limit to geometry and slide
 	for p in points:
 		var move_dir = (p.position - p.previous_position).normalized()
 		var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir, p.position)
 		var result := space_state.intersect_ray(query)
 		if result: 
-			p.position = result.position
+			var n = result.normal
+			var remaining = p.position - result.position
+			var remaining_proj_n = remaining * n * n
+			var slide_pos = p.position - remaining_proj_n 
+			p.position = lerp(result.position, slide_pos, slide_scale)
 
 
 func accumulate_constraint_offsets():
