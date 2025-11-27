@@ -1,25 +1,39 @@
-[gd_scene load_steps=4 format=3 uid="uid://b2pnax07aujhd"]
+[gd_scene load_steps=5 format=3 uid="uid://b2pnax07aujhd"]
 
 [ext_resource type="Script" uid="uid://b0tacqei7k716" path="res://softbody/soft_body.gd" id="1_23gtn"]
 [ext_resource type="Script" uid="uid://b3kmc7cyr58wo" path="res://softbody/soft_body_renderer.gd" id="2_d3k81"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_23gtn"]
-size = Vector2(951, 40)
+size = Vector2(594.6499, 40)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_23gtn"]
 
 [node name="SoftBodyLevel" type="Node2D"]
 
 [node name="SoftBody" type="Node2D" parent="."]
+position = Vector2(-416, -7)
 script = ExtResource("1_23gtn")
-slide_scale = 0.001
+number_of_points = 20
+CONSTRAINT_STIFFNESS = 0.195
+slide_scale = 0.445
 metadata/_custom_type_script = "uid://b0tacqei7k716"
 
 [node name="SoftBodytRenderer" type="Node2D" parent="SoftBody"]
+z_index = -1
 script = ExtResource("2_d3k81")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+scale = Vector2(1, 0.9819694)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(0, 129)
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+position = Vector2(-469.99994, 204.99997)
+rotation = 0.8133186
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
 shape = SubResource("RectangleShape2D_23gtn")
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(0, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("WorldBoundaryShape2D_23gtn")

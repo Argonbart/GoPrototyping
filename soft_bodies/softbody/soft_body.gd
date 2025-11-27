@@ -8,22 +8,27 @@ class_name SoftBody extends Node2D
 @export var desired_area_multiplier: float = 1.0
 
 @export_range(0.0, 1.0) var slide_scale = 0.8
+@export var move_speed: float = 5.0
 
-var desired_area = 10000
+var desired_area: float
 
 var points: Array[SBPoint]
 var constraints: Array[SBConstraint]
 
-var input_vector: Vector2 
+var input_axis: float
+var intends_jump: bool
+
+# debug
+var collisions_this_frame: Array[Dictionary]
 
 func _ready() -> void:
-	setup(number_of_points, desired_area * desired_area_multiplier, 0.5, CONSTRAINT_STIFFNESS)
-	# setup_single_point()
+	setup(number_of_points, radius, 0.5, CONSTRAINT_STIFFNESS)
+	#setup_single_point()
 
 
-func setup(num_points: int, area: float, constraint_length: float, constraint_stiffness: float):
+func setup(num_points: int, _radius: float, constraint_length: float, constraint_stiffness: float):
 	clear()
-	desired_area = area
+	desired_area = _radius * _radius * PI
 	for i in range(num_points):
 		var angle = 360.0 / num_points * i
 		var angle_rad = deg_to_rad(angle)
@@ -48,12 +53,14 @@ func clear():
 	points.clear()
 
 
-func _process(delta: float) -> void:
-	input_vector = Input.get_vector("left", "right", "up", "down")
-	print(input_vector)
+func _process(_delta: float) -> void:
+	queue_redraw()
+	input_axis = Input.get_axis("left", "right")
+	intends_jump = Input.is_action_pressed("jump")
 
 
 func _physics_process(_delta: float) -> void:
+	collisions_this_frame.clear()
 	var space_state = get_world_2d().direct_space_state
 	# --- verlet integration ---
 	for p in points:
@@ -77,7 +84,7 @@ func _physics_process(_delta: float) -> void:
 			var v_reflected = v_remaining - 2 * v_proj_n			
 
 			p.position = intersection + v_reflected
-			p.previous_position = intersection
+			p.previous_position = intersection	
 
 		# no collision happening
 		else:
@@ -85,10 +92,15 @@ func _physics_process(_delta: float) -> void:
 			p.previous_position = temp_pos
 
 		# gravity
-		p.position += Vector2.DOWN
+		p.accumulate_displacement(Vector2.DOWN * 3)
 
 		# input
-		p.position += input_vector
+		p.accumulate_displacement(Vector2(input_axis,0) * move_speed)
+		if intends_jump: 
+			desired_area_multiplier = 5
+		else:
+			desired_area_multiplier = lerp(desired_area_multiplier, 1.0, 0.01)				
+
 	# --- handle constraints and area constraint ---
 	for i in range(CONSTRAINT_SOLVER_STEPS):
 		accumulate_constraint_offsets()
@@ -98,20 +110,18 @@ func _physics_process(_delta: float) -> void:
 		for p in points:
 			p.apply_displacement()
 
-	for p in points:
-		p.limit_to_bounds(get_viewport_rect().size * 0.5)
-
 		# limit to geometry and slide
 	for p in points:
 		var move_dir = (p.position - p.previous_position).normalized()
-		var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir, p.position)
+		var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir * 2, p.position)
 		var result := space_state.intersect_ray(query)
 		if result: 
-			var n = result.normal
+			var n = result.normal.normalized()
 			var remaining = p.position - result.position
 			var remaining_proj_n = remaining * n * n
 			var slide_pos = p.position - remaining_proj_n 
 			p.position = lerp(result.position, slide_pos, slide_scale)
+			collisions_this_frame.append(result)
 
 
 func accumulate_constraint_offsets():
@@ -151,8 +161,7 @@ func accumulate_area_offsets():
 		var height = (p1.y + p2.y) / 2
 		area_accumulator += width * -height
 
-	var factor = (desired_area - area_accumulator) / circ
-
+	var factor = (desired_area * desired_area_multiplier - area_accumulator) / circ
 
 	for id in range(points.size()):
 		var next_id = (id + 1) % points.size()
@@ -168,3 +177,10 @@ func accumulate_area_offsets():
 		var offset = dir * factor
 
 		points[id].accumulate_displacement(offset)
+
+
+func _draw() -> void:
+	for c in collisions_this_frame:
+		var size = Vector2(5, 5)
+		var rect = Rect2(c.position - global_position - size * 0.5, size)
+		draw_rect(rect, Color.RED)
