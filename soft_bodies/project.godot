@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="SoftBody"
-run/main_scene="uid://dvgfe5026ci00"
+run/main_scene="uid://b2pnax07aujhd"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 

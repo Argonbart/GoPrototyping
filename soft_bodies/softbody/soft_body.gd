@@ -221,6 +221,10 @@ func accumulate_area_offsets():
 
 func _draw() -> void:
 	for c in collisions_this_frame:
+		var pos = c.position - global_position
 		var size = Vector2(5, 5)
-		var rect = Rect2(c.position - global_position - size * 0.5, size)
+		var rect = Rect2(pos - size * 0.5, size)
 		draw_rect(rect, Color.RED)
+
+		var normal_target_pos = pos + c.normal * 15
+		draw_line(pos, normal_target_pos, Color.YELLOW, 2)
