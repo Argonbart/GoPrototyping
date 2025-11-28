@@ -3,6 +3,9 @@ class_name SoftBody extends Node2D
 @export var number_of_points: int = 10
 @export var radius: float = 50.0
 
+@export_range(0.0, 1.0) var AREA_STIFFNESS := 0.3
+@export var MAX_AREA_PUSH: float = 10.0
+
 @export_range(0.0, 1.0) var CONSTRAINT_STIFFNESS: float = 0.5
 @export var CONSTRAINT_SOLVER_STEPS: int = 10
 @export var desired_area_multiplier: float = 1.0
@@ -118,6 +121,7 @@ func clip_to_geometry(p: SBPoint):
 	var results: Array[Dictionary] = space_state.intersect_point(point_query, 8)
 
 	if results.size() == 0:
+		p.collision_normal = Vector2.ZERO
 		return
 
 	var intersected_colliders: Array[RID]
@@ -153,6 +157,7 @@ func clip_to_geometry(p: SBPoint):
 			collisions_this_frame.append(hit)
 
 	p.position = p.position - total_push
+	p.collision_normal = combined_normal.normalized()
 
 	# sliding
 	if combined_normal.length() > 0.0001:
@@ -179,7 +184,16 @@ func accumulate_constraint_offsets():
 			var target_2_smoothed = lerp(p2.position, target_2, c.stiffness)
 
 			var offset_1 = target_1_smoothed - p1.position
+			var n1 = p1.collision_normal
+			if n1.length() > 0.001:
+				n1 = n1.normalized()
+				offset_1 -= n1 * max(0.0, offset_1.dot(n1))
+
 			var offset_2 = target_2_smoothed - p2.position
+			var n2 = p2.collision_normal
+			if n2.length() > 0.001:
+				n2 = n2.normalized()
+				offset_1 -= n2 * max(0.0, offset_1.dot(n2))
 
 			p1.accumulate_displacement(offset_1)
 			p2.accumulate_displacement(offset_2)
@@ -201,9 +215,16 @@ func accumulate_area_offsets():
 		var height = (p1.y + p2.y) / 2
 		area_accumulator += width * -height
 
-	var factor = (desired_area * desired_area_multiplier - area_accumulator) / circ
+	var raw_factor = (desired_area * desired_area_multiplier - area_accumulator) / circ
+
+	# stiffness controls “how much of the error we fix per iteration”
+	var factor = raw_factor * AREA_STIFFNESS
+
+	# optional clamp so a single iteration can’t go crazy
+	factor = clamp(factor, -MAX_AREA_PUSH, MAX_AREA_PUSH)
 
 	for id in range(points.size()):
+		var p = points[id]
 		var next_id = (id + 1) % points.size()
 		var prev_id = (id - 1 + points.size()) % points.size()	
 		
@@ -215,6 +236,13 @@ func accumulate_area_offsets():
 
 		dir = dir.normalized()
 		var offset = dir * factor
+		var n = p.collision_normal
+		if n.length() > 0.001:
+			n = n.normalized()
+			var normal_component = n * offset.dot(n)
+			# remove the part that pushes *into* the collider
+			if normal_component.dot(n) > 0.0:
+				offset -= normal_component
 
 		points[id].accumulate_displacement(offset)
 
@@ -228,3 +256,8 @@ func _draw() -> void:
 
 		var normal_target_pos = pos + c.normal * 15
 		draw_line(pos, normal_target_pos, Color.YELLOW, 2)
+
+	for p in points:
+		var pos = p.position - global_position
+		var n_target = pos + p.collision_normal * 15
+		draw_line(pos, n_target, Color.YELLOW, 2)

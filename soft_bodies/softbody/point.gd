@@ -9,6 +9,8 @@ var radius: float
 var displacement_accumulator: Vector2
 var number_of_accumulations: int
 
+var collision_normal: Vector2 = Vector2.ZERO
+
 
 func _init(p: Vector2, r: float) -> void:
 		position = p
