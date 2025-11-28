@@ -25,3 +25,5 @@ func _draw() -> void:
 	for p in body.points:
 		var color = Color.DARK_OLIVE_GREEN 	
 		draw_circle(p.position - global_position, p.radius, color)
+
+	

@@ -22,15 +22,20 @@ position = Vector2(-69, -7)
 script = ExtResource("1_23gtn")
 number_of_points = 20
 AREA_STIFFNESS = 0.685
+BENDING_STIFFNESS = 0.0
 CONSTRAINT_SOLVER_STEPS = 12
 slide_scale = 0.936
 move_speed = 5.3
 gravity_scale = 3.0
 metadata/_custom_type_script = "uid://b0tacqei7k716"
 
-[node name="SoftBodytRenderer" type="Node2D" parent="SoftBody"]
+[node name="SoftBodyRenderer" type="Node2D" parent="SoftBody"]
+visible = false
 z_index = -1
 script = ExtResource("2_d3k81")
+
+[node name="Sprite2D" type="Sprite2D" parent="SoftBody"]
+position = Vector2(-1, 0)
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 position = Vector2(-557, 6)

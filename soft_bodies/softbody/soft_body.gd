@@ -14,6 +14,8 @@ class_name SoftBody extends Node2D
 @export var move_speed: float = 5.0
 @export var gravity_scale: float = 1.0
 
+@export var draw_collision_info: bool = false
+
 var desired_area: float
 
 var points: Array[SBPoint]
@@ -60,9 +62,9 @@ func clear():
 
 
 func _process(_delta: float) -> void:
-	queue_redraw()
 	input_axis = Input.get_axis("left", "right")
 	intends_jump = Input.is_action_pressed("jump")
+	queue_redraw()
 
 
 func _physics_process(_delta: float) -> void:
@@ -248,16 +250,50 @@ func accumulate_area_offsets():
 
 
 func _draw() -> void:
-	for c in collisions_this_frame:
-		var pos = c.position - global_position
-		var size = Vector2(5, 5)
-		var rect = Rect2(pos - size * 0.5, size)
-		draw_rect(rect, Color.RED)
-
-		var normal_target_pos = pos + c.normal * 15
-		draw_line(pos, normal_target_pos, Color.YELLOW, 2)
+	var arr: PackedVector2Array = []
 
 	for p in points:
-		var pos = p.position - global_position
-		var n_target = pos + p.collision_normal * 15
-		draw_line(pos, n_target, Color.YELLOW, 2)
+		arr.append(p.position - global_position)
+
+	var polygon_color = Color.GREEN
+	polygon_color.a = 0.15
+	draw_colored_polygon(arr, polygon_color)
+	arr.append(points[0].position - global_position) 
+	draw_polyline(arr, Color.DARK_GREEN, 5)
+
+	if draw_collision_info:
+		for c in collisions_this_frame:
+			var pos = c.position - global_position
+			var size = Vector2(5, 5)
+			var rect = Rect2(pos - size * 0.5, size)
+			draw_rect(rect, Color.RED)
+
+			var normal_target_pos = pos + c.normal * 15
+			draw_line(pos, normal_target_pos, Color.YELLOW, 2)
+
+		for p in points:
+			var pos = p.position - global_position
+			var n_target = pos + p.collision_normal * 15
+			draw_line(pos, n_target, Color.YELLOW, 2)
+
+
+
+func is_valid(v: Vector2) -> bool:
+	return not (is_nan(v.x) or is_nan(v.y) or is_inf(v.x) or is_inf(v.y))
+
+
+func get_sorted_points(point_array: Array[SBPoint]) -> PackedVector2Array:
+	var center = Vector2.ZERO
+	for p in point_array:
+		center += p.position
+	center /= point_array.size()
+
+	var arr := point_array.map(func(p): return p.position)
+	arr.sort_custom(func(a,b):
+		return (a - center).angle() < (b - center).angle()
+	)
+
+	var out := PackedVector2Array()
+	for v in arr:
+		out.append(v - global_position)
+	return out
