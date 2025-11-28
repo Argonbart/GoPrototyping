@@ -92,8 +92,10 @@ func _physics_process(_delta: float) -> void:
 		for p in points:
 			p.apply_displacement()
 
-	for p in points:
-		move_and_slide(p)
+		for p in points:
+			clip_to_geometry(p)
+			#clip_to_geometry_shape(p)
+			#move_and_slide(p)
 
 
 func move_and_slide(p: SBPoint):
@@ -110,6 +112,43 @@ func move_and_slide(p: SBPoint):
 		var slide_pos = p.position - remaining_proj_n
 		p.position = lerp(result.position, slide_pos, slide_scale)
 		collisions_this_frame.append(result)
+
+
+func clip_to_geometry(p: SBPoint):
+	var space_state = get_world_2d().direct_space_state
+
+	var point_query = PhysicsPointQueryParameters2D.new()
+	point_query.position = p.position
+	var results: Array[Dictionary] = space_state.intersect_point(point_query, 8)
+
+	if results.size() == 0:
+		return
+
+	var intersected_colliders: Array[RID]
+
+	for r in results:
+		intersected_colliders.append(r.rid)
+
+	var total_push: Vector2 = Vector2.ZERO
+
+	var move_dir = (p.position - p.previous_position).normalized()
+	for c in intersected_colliders:
+		# get all other intersected colliders for exclude 
+		var others = intersected_colliders.filter(func(x): return x != c)
+		var ray_query = PhysicsRayQueryParameters2D.new()
+		ray_query.from = p.previous_position - move_dir
+		ray_query.to = p.position
+		ray_query.exclude = others
+		var ray_result = space_state.intersect_ray(ray_query)
+		if ray_result:
+			collisions_this_frame.append(ray_result)
+			var normal = ray_result.normal
+			var intersection = ray_result.position
+			var depth = ((p.position - intersection).dot(normal))
+
+			total_push += normal * depth
+	
+	p.position = p.position - total_push
 
 
 func accumulate_constraint_offsets():

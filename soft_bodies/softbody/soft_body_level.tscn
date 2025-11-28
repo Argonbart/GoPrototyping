@@ -1,12 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b2pnax07aujhd"]
+[gd_scene load_steps=4 format=3 uid="uid://b2pnax07aujhd"]
 
 [ext_resource type="Script" uid="uid://b0tacqei7k716" path="res://softbody/soft_body.gd" id="1_23gtn"]
 [ext_resource type="Script" uid="uid://b3kmc7cyr58wo" path="res://softbody/soft_body_renderer.gd" id="2_d3k81"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_23gtn"]
 size = Vector2(594.6499, 40)
-
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_23gtn"]
 
 [node name="SoftBodyLevel" type="Node2D"]
 
@@ -26,20 +24,29 @@ z_index = -1
 script = ExtResource("2_d3k81")
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
-position = Vector2(-263, 81)
-rotation = 0.8133186
+position = Vector2(-557, 6)
+rotation = 1.5707964
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
 shape = SubResource("RectangleShape2D_23gtn")
 
-[node name="Ground" type="StaticBody2D" parent="."]
-position = Vector2(0, 292)
+[node name="StaticBody2D5" type="StaticBody2D" parent="."]
+position = Vector2(556, 6)
+rotation = 1.5707964
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
-shape = SubResource("WorldBoundaryShape2D_23gtn")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D5"]
+shape = SubResource("RectangleShape2D_23gtn")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(365, 242)
+[node name="StaticBody2D3" type="StaticBody2D" parent="."]
+position = Vector2(3, 305)
+scale = Vector2(1.9600012, 1)
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
-polygon = PackedVector2Array(-9.74953, -98.92309, -129.74953, -102.92309, -66.74953, 112.07691, 6.25047, 122.07691, 92.25047, 85.07691, 125.25047, -74.92309)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3"]
+shape = SubResource("RectangleShape2D_23gtn")
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="."]
+position = Vector2(3, -303)
+scale = Vector2(1.9600012, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D4"]
+shape = SubResource("RectangleShape2D_23gtn")
