@@ -30,6 +30,8 @@ func _ready() -> void:
 func setup(num_points: int, _radius: float, constraint_length: float, constraint_stiffness: float):
 	clear()
 	desired_area = _radius * _radius * PI
+	var circ = 2 * _radius * PI
+	var segment_length = circ / num_points
 	for i in range(num_points):
 		var angle = 360.0 / num_points * i
 		var angle_rad = deg_to_rad(angle)
@@ -39,7 +41,7 @@ func setup(num_points: int, _radius: float, constraint_length: float, constraint
 	for i in range(points.size()):
 		var p_a = points[i]
 		var p_b = points[(i + 1) % points.size()]
-		constraints.append(SBConstraint.new(p_a, p_b, constraint_length, constraint_stiffness))
+		constraints.append(SBConstraint.new(p_a, p_b, segment_length, constraint_stiffness))
 
 
 func setup_single_point():
@@ -98,8 +100,9 @@ func move_and_slide(p: SBPoint):
 	var space_state = get_world_2d().direct_space_state
 	
 	var move_dir = (p.position - p.previous_position).normalized()
-	var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir * 2, p.position)
+	var query = PhysicsRayQueryParameters2D.create(p.previous_position - move_dir, p.position)
 	var result := space_state.intersect_ray(query)
+
 	if result: 
 		var n = result.normal.normalized()
 		var remaining = p.position - result.position

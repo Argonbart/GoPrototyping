@@ -10,11 +10,13 @@ size = Vector2(594.6499, 40)
 
 [node name="SoftBodyLevel" type="Node2D"]
 
+[node name="Camera2D" type="Camera2D" parent="."]
+scale = Vector2(1, 0.9819694)
+
 [node name="SoftBody" type="Node2D" parent="."]
-position = Vector2(-416, -7)
+position = Vector2(-69, -7)
 script = ExtResource("1_23gtn")
 number_of_points = 20
-CONSTRAINT_STIFFNESS = 0.2
 slide_scale = 0.5
 gravity_scale = 3.0
 metadata/_custom_type_script = "uid://b0tacqei7k716"
@@ -23,18 +25,21 @@ metadata/_custom_type_script = "uid://b0tacqei7k716"
 z_index = -1
 script = ExtResource("2_d3k81")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-scale = Vector2(1, 0.9819694)
-
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
-position = Vector2(-469.99994, 204.99997)
+position = Vector2(-263, 81)
 rotation = 0.8133186
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
 shape = SubResource("RectangleShape2D_23gtn")
 
 [node name="Ground" type="StaticBody2D" parent="."]
-position = Vector2(0, 324)
+position = Vector2(0, 292)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
 shape = SubResource("WorldBoundaryShape2D_23gtn")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(365, 242)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(-9.74953, -98.92309, -129.74953, -102.92309, -66.74953, 112.07691, 6.25047, 122.07691, 92.25047, 85.07691, 125.25047, -74.92309)
