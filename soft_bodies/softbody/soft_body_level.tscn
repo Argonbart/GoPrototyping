@@ -15,7 +15,7 @@ scale = Vector2(1, 0.9819694)
 position = Vector2(-69, -7)
 script = ExtResource("1_23gtn")
 number_of_points = 20
-slide_scale = 0.5
+slide_scale = 1.0
 gravity_scale = 3.0
 metadata/_custom_type_script = "uid://b0tacqei7k716"
 
