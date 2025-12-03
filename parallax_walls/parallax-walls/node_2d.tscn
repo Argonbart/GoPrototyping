@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://bcehd48cr48v7"]
+
+[ext_resource type="Texture2D" uid="uid://b4a0n24rt556k" path="res://Untitled.png" id="1_0e48y"]
+[ext_resource type="Script" uid="uid://c28pblbxjm3sb" path="res://walls.gd" id="2_0hol4"]
+[ext_resource type="Script" uid="uid://cdxm6tdvfekqt" path="res://camera_2d.gd" id="2_epypp"]
+[ext_resource type="Script" uid="uid://b0tacqei7k716" path="res://softbody/soft_body.gd" id="4_0hol4"]
+
+[sub_resource type="Curve" id="Curve_epypp"]
+_data = [Vector2(0, 0), 0.0, 2.7461708, 0, 0, Vector2(1, 1), 0.112903975, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0hol4"]
+texture = ExtResource("1_0e48y")
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[sub_resource type="TileSet" id="TileSet_q6r6c"]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_0hol4")
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Walls" type="Node2D" parent="." node_paths=PackedStringArray("canvas")]
+script = ExtResource("2_0hol4")
+top_offset = 0.5
+count = 16
+canvas = NodePath("CanvasLayer")
+color_1 = Color(0.826793, 0.7685456, 0.8267276, 1)
+color_2 = Color(0.13174233, 0.13174233, 0.13174233, 1)
+curve = SubResource("Curve_epypp")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Walls"]
+follow_viewport_enabled = true
+
+[node name="TileMapLayer" type="TileMapLayer" parent="Walls/CanvasLayer"]
+scale = Vector2(20, 20)
+tile_set = SubResource("TileSet_q6r6c")
+
+[node name="SoftBody" type="Node2D" parent="."]
+position = Vector2(1000, 1000)
+script = ExtResource("4_0hol4")
+number_of_points = 20
+AREA_STIFFNESS = 0.8
+CONSTRAINT_SOLVER_STEPS = 100
+move_speed = 2.0
+metadata/_custom_type_script = "uid://b0tacqei7k716"
+
+[node name="Camera2D" type="Camera2D" parent="SoftBody"]
+script = ExtResource("2_epypp")
