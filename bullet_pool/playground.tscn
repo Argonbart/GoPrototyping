@@ -1,0 +1,102 @@
+[gd_scene load_steps=10 format=3 uid="uid://clajftxagtjbr"]
+
+[ext_resource type="Script" uid="uid://di2oxuv84dk76" path="res://spawner.gd" id="1_rupst"]
+[ext_resource type="Texture2D" uid="uid://o273ygagml4q" path="res://icon.svg" id="2_m8u5f"]
+[ext_resource type="PackedScene" uid="uid://darg0j45q23pb" path="res://bullet.tscn" id="2_wt17y"]
+[ext_resource type="Script" uid="uid://rxtwsysv7cfd" path="res://player.gd" id="3_is3ju"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_o00ia"]
+normal = Vector2(0, 1)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_4bqqs"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_ynsuh"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_v7dth"]
+normal = Vector2(-1, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_is3ju"]
+size = Vector2(128, 128)
+
+[node name="Playground" type="Node2D"]
+
+[node name="Spawner" type="Node2D" parent="." node_paths=PackedStringArray("timer", "bullet_label", "fps_label")]
+position = Vector2(564, 341)
+script = ExtResource("1_rupst")
+timer = NodePath("Timer")
+bullet = ExtResource("2_wt17y")
+bullet_label = NodePath("../CanvasLayer/Control/MarginContainer/VBoxContainer/RichTextLabel")
+fps_label = NodePath("../CanvasLayer/Control/MarginContainer/VBoxContainer/RichTextLabel2")
+
+[node name="Timer" type="Timer" parent="Spawner"]
+wait_time = 0.4
+autostart = true
+
+[node name="Boundaries" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries"]
+shape = SubResource("WorldBoundaryShape2D_o00ia")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Boundaries"]
+shape = SubResource("WorldBoundaryShape2D_4bqqs")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(1152, 648)
+shape = SubResource("WorldBoundaryShape2D_ynsuh")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(1152, 648)
+shape = SubResource("WorldBoundaryShape2D_v7dth")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Bullets: xx"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="CanvasLayer/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "FPS: xx"
+fit_content = true
+autowrap_mode = 0
+
+[node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("health_bar")]
+position = Vector2(244, 358)
+collision_mask = 15
+script = ExtResource("3_is3ju")
+health_bar = NodePath("ProgressBar")
+
+[node name="ProgressBar" type="ProgressBar" parent="Player"]
+custom_minimum_size = Vector2(120, 0)
+offset_left = -60.0
+offset_top = -100.0
+offset_right = 60.0
+offset_bottom = -73.0
+value = 100.0
+show_percentage = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+modulate = Color(1, 0, 1, 1)
+texture = ExtResource("2_m8u5f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_is3ju")
