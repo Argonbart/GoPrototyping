@@ -14,6 +14,9 @@ class_name SoftBody extends Node2D
 @export var move_speed: float = 5.0
 @export var gravity_scale: float = 1.0
 
+@export var limit_velocity: bool = true
+@export var maximum_velocity: float = 1000.0
+
 @export var draw_collision_info: bool = false
 
 var desired_area: float
@@ -74,6 +77,10 @@ func _physics_process(_delta: float) -> void:
 		var temp_pos = p.position
 
 		var velocity = (p.position - p.previous_position) * 0.99
+
+		# limit velocity 
+		if limit_velocity:
+			velocity = velocity.limit_length(maximum_velocity)
 
 		p.position += velocity
 		p.previous_position = temp_pos

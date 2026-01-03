@@ -21,12 +21,14 @@ zoom = Vector2(0.745, 0.745)
 position = Vector2(-69, -7)
 script = ExtResource("1_23gtn")
 number_of_points = 20
-AREA_STIFFNESS = 0.685
-BENDING_STIFFNESS = 0.0
+AREA_STIFFNESS = 0.8
 CONSTRAINT_SOLVER_STEPS = 12
-slide_scale = 0.936
+desired_area_multiplier = 2.0
+slide_scale = 0.981
 move_speed = 5.3
 gravity_scale = 3.0
+maximum_velocity = 200.0
+draw_collision_info = true
 metadata/_custom_type_script = "uid://b0tacqei7k716"
 
 [node name="SoftBodyRenderer" type="Node2D" parent="SoftBody"]
