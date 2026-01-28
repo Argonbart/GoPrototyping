@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bonc8k7grij6l"]
+
+[ext_resource type="Script" uid="uid://b78vqq22bvlse" path="res://entity.gd" id="1_uqc13"]
+[ext_resource type="Texture2D" uid="uid://d3y5crwq6fe3" path="res://icon.svg" id="2_nwmpt"]
+
+[node name="Entity" type="Node2D" unique_id=154661158]
+script = ExtResource("1_uqc13")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=54014540]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_nwmpt")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=875468380]
+zoom = Vector2(4, 4)

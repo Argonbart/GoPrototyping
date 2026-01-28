@@ -1,0 +1,110 @@
+[gd_scene format=4 uid="uid://dp8c6ry7mikvk"]
+
+[ext_resource type="Script" uid="uid://df6cxlgj0ji4u" path="res://game_manager.gd" id="1_o00ia"]
+[ext_resource type="Texture2D" uid="uid://ygw6olg32lod" path="res://fantasyhextiles_v3_borderless.png" id="1_rupst"]
+[ext_resource type="Script" uid="uid://jleeqr0col03" path="res://tile_map_layer.gd" id="2_is3ju"]
+[ext_resource type="PackedScene" uid="uid://bonc8k7grij6l" path="res://entity.tscn" id="4_is3ju"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wt17y"]
+texture = ExtResource("1_rupst")
+margins = Vector2i(0, 16)
+separation = Vector2i(0, 16)
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+2:0/0/custom_data_0 = -1
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+5:0/0/custom_data_0 = -1
+6:0/0 = 0
+6:0/0/custom_data_0 = -1
+7:0/0 = 0
+7:0/0/custom_data_0 = -1
+7:1/0 = 0
+6:1/0 = 0
+5:1/0 = 0
+4:1/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+7:3/0 = 0
+6:2/0 = 0
+5:2/0 = 0
+4:2/0 = 0
+3:2/0 = 0
+7:2/0 = 0
+6:3/0 = 0
+5:3/0 = 0
+1:3/0 = 0
+0:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+0:5/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_m8u5f"]
+tile_shape = 3
+tile_layout = 5
+tile_offset_axis = 1
+tile_size = Vector2i(32, 28)
+custom_data_layer_0/name = "Walkable"
+custom_data_layer_0/type = 2
+sources/0 = SubResource("TileSetAtlasSource_wt17y")
+
+[node name="Playground" type="Node2D" unique_id=1787202232 node_paths=PackedStringArray("map", "entity_name", "entity_range")]
+script = ExtResource("1_o00ia")
+map = NodePath("TileMapLayer")
+entity_name = NodePath("CanvasLayer/Control/VBoxContainer/EntityName")
+entity_range = NodePath("CanvasLayer/Control/VBoxContainer/EntityRange")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=946696396]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAAAAAACAAIAAAACAAAAAAADAAEAAAACAAAAAAAEAAEAAAAAAAAAAAAEAAAAAAAAAAAAAAADAAIAAAABAAEAAAAEAAIAAAABAAEAAAAFAAEAAAABAAEAAAABAAIAAAABAAMAAAAAAAIAAAABAAMAAAAFAAIAAAAFAAAAAAAFAAAAAAAHAAAAAAAFAP//AAAFAAAAAAAGAAAAAAAHAAAAAAAGAAEAAAACAAMAAAAGAAIAAAACAAMAAAAGAAMAAAACAAMAAAAFAAMAAAACAAMAAAAFAAQAAAAHAAAAAAAEAAQAAAACAAMAAAADAAMAAAACAAMAAAAEAAMAAAACAAMAAAACAAMAAAACAAMAAAAGAAQAAAAHAAAAAAAHAAQAAAAHAAAAAAAHAAUAAAAHAAAAAAAGAAUAAAAHAAAAAAAGAP//AAAHAAAAAAA=")
+tile_set = SubResource("TileSet_m8u5f")
+script = ExtResource("2_is3ju")
+metadata/_edit_lock_ = true
+
+[node name="Entity" parent="." unique_id=154661158 node_paths=PackedStringArray("map") instance=ExtResource("4_is3ju")]
+position = Vector2(13, 11)
+map = NodePath("../TileMapLayer")
+entity_name = "Player"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=539504833]
+
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=832990018]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control" unique_id=846093940]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EntityName" type="RichTextLabel" parent="CanvasLayer/Control/VBoxContainer" unique_id=1451984958]
+layout_mode = 2
+text = "Name"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="EntityRange" type="RichTextLabel" parent="CanvasLayer/Control/VBoxContainer" unique_id=667891875]
+layout_mode = 2
+text = "Name"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
