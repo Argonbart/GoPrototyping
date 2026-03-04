@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://bf8abbrg1oil2"]
+
+[ext_resource type="Script" uid="uid://dfwfowwgpjrou" path="res://slot_machine.gd" id="1_nmlme"]
+[ext_resource type="PackedScene" uid="uid://c5sd2rmsvwcd7" path="res://Untitled.glb" id="2_i6cki"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_nmlme"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_i6cki"]
+sky_material = SubResource("ProceduralSkyMaterial_nmlme")
+
+[sub_resource type="Environment" id="Environment_knkoj"]
+background_mode = 1
+background_color = Color(0.08701607, 0.08701607, 0.08701607, 1)
+sky = SubResource("Sky_i6cki")
+tonemap_mode = 2
+
+[node name="SlotMachine" type="Node3D" unique_id=2035687691 node_paths=PackedStringArray("wheels")]
+script = ExtResource("1_nmlme")
+wheels = [NodePath("Wheel"), NodePath("Wheel2"), NodePath("Wheel3")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=436409858]
+environment = SubResource("Environment_knkoj")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=654045316]
+transform = Transform3D(-0.7768682, -0.4485252, 0.4419286, 0.3827214, 0.2209643, 0.8970502, -0.50000006, 0.8660254, 3.7855173e-08, 1.1395476, 0.846451, 0)
+light_color = Color(0.4351923, 0.43519226, 0.43519226, 1)
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1634341311]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.6, 0, 0)
+
+[node name="Wheel" parent="." unique_id=1786582353 instance=ExtResource("2_i6cki")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+
+[node name="Wheel2" parent="." unique_id=954925960 instance=ExtResource("2_i6cki")]
+
+[node name="Wheel3" parent="." unique_id=517562316 instance=ExtResource("2_i6cki")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.2)
